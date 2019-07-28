@@ -5,17 +5,22 @@ To do so, it offers the functionalities of
 * Action planning,
 * Progress monitoring.
 
-### Details
+### Details -- Project framework
+* Five different project scope: self, family, friend, community, society.
+* Macro planning: scope switching.
+    * Timezone method: wake -> {self, society} -> comminuty -> {self, friend, family} -> sleep
+* Micro planning: project switching within respective scopes.
+
+### Details -- Timeline framework
 * Goals
     * Goals are structured in hierarchical eight `Timelines`,
     namely, daily, weekly, monthly, quarterly, yearly, triennial, decennial and life-scale timelines.
-    Each time line is a line from past to present and then future with nodes on it.
-    * `Nodes` represent goals one wish to achieve.
-    The nodes may or may not have a parent on the upper timeline and children on the lower timeline.
-    * Each timeline is segmented into past, present and future period.
-    At the moment of switching periods (e.g., at the end of days), we are prompted to reflect on the previous period (i.e., summarize what we did and did not) and arrange nodes on the next period.
-    * Each node has a few attributes for monitoring the progress, namely, the status (closed/done/ongoing/open), the children nodes, a brief description and the timestamp.
-* Actions
+    Each time line consists of goal nodes and the action plan.
+    The action plan is a array of subtimelines with the children nodes of the goal nodes assigned to them.
+    * `Nodes` represent (sub)goals one wish to achieve.
+    The nodes may or may not have a parent on the upper timelines, but should have children on the lower timelines unless it is .
+    * Each node has a few attributes for monitoring the progress, namely, the status (closed/done/ongoing/open), the children nodes, and a brief description.
+
 
 ### Future work
 * Geographical concerns
