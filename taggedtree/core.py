@@ -32,8 +32,7 @@ def valid_priority(p: str) -> bool:
 
 
 def valid_tag(tag: str) -> bool:
-    cond = (tag == tag.strip()) and ("#" not in tag)
-    return cond
+    return all(c not in tag for c in [" ", "　", "#"])
 
 
 def underscore_label(label: str) -> str:
