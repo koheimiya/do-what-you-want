@@ -62,7 +62,7 @@ def sort_tree(tree: Tree) -> Tree:
     if not children:
         return deepcopy(tree)
 
-    _children = [sort_tree(t) for p, t in children]
+    _children = [sort_tree(t) for t in children]
     return new_tree(attributes(tree), sorted(_children, key=_key_sort_tree))
 
 
@@ -117,12 +117,78 @@ def show_tree(tree: Tree, prefix: str = "", last: bool = True, show_done: bool =
 
 
 def show_attr(attr: Attr) -> str:
-    done_mark = "(DONE) " if attr["done"] else ""
-    s = done_mark + "[" + attr["priority"] + "] "
+    done_mark = "x" if attr["done"] else " "
+    s = "[" + done_mark + attr["priority"] + "] "
     s += attr["label"]
     for t in attr["tags"]:
         s += " #" + t
     return s
+
+
+def read_attr(s: str) -> Tuple[str, Optional[Attr]]:
+
+    def split_by(s: str, delim: List[str]) -> List[str]:
+        res = []
+        for d in delim:
+            i = s.find(d)
+            if i == -1:
+                break
+            res.append(s[:i])
+            s = s[i + len(d):]
+        res.append(s)
+        return res
+
+    delimiters = ["- [", "] "]
+    ss = split_by(s, delimiters)
+    if len(ss) == 1:
+        return ss[0], None
+    elif len(ss) != 3:
+        raise ValueError(f"Unrecognized token: {s} -> {ss}")
+    indent, done_priority, label_tags = ss
+    indent = indent.replace("|", " ").replace("+", " ")
+    done_mark, priority = done_priority[:1], done_priority[1:]
+
+    assert done_mark in " x", "invalid done_mark"
+    done = done_mark == "x"
+    assert valid_priority(priority), "invalid priority"
+    label, *tags = map(str.strip, label_tags.split("#"))
+    assert all(valid_tag(t) for t in tags), "invalid tags"
+    return indent, new_attr(label=label, priority=priority, tags=tags, done=done)
+
+
+def read_tree(s: str, tree_stack: List[Tuple[Optional[str], Tree]] = None) -> Tree:
+    if tree_stack is None:
+        tree_stack = []
+
+    if s == "":
+        (_, root_tree), *_ = tree_stack
+        return root_tree
+
+    sp = s.find("\n")
+    if sp == -1:
+        sp = len(s) + 1
+    line = s[:sp]
+    s_next = s[sp + 1:]
+    indent, attr = read_attr(line)
+
+    if attr is not None:
+        tree = new_tree(attr)
+
+        # find parent
+        if tree_stack:
+            prev_indent, _ = tree_stack[-1]
+            if not (indent.startswith(prev_indent) and indent != prev_indent):
+                while True:
+                    prev_indent, prev_tree = tree_stack.pop()
+                    if indent == prev_indent:
+                        break
+            _, parent = tree_stack[-1]
+            subtrees(parent).append(tree)
+
+        # append a node
+        tree_stack.append((indent, tree))
+
+    return read_tree(s_next, tree_stack)
 
 
 def show_leaves(tree: Tree, tags: list=None, address=" ", buffer="", urgent_only=True, show_done=False):

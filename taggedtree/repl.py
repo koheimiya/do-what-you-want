@@ -4,11 +4,12 @@ from typing import Optional, Tuple, List
 import editor
 
 from taggedtree.core import save_tree, load_tree, show_tree, show_leaves, subtrees, show_attr, attributes, Tree, Attr, \
-    valid_priority, new_attr, valid_tag, root, new_tree
+    valid_priority, new_attr, valid_tag, root, new_tree, normalized_tree, sort_tree
 
 GREETINGS = "---- TOT REPL ----"
 PROMPT = "TOT > "
-HELP = "l: list current goals, s/S: show the entire tree, e: edit the tree, w: save the tree, q: quit REPL"
+HELP = "l: list current goals, s/S: show the entire tree, e: edit the tree, " +\
+    "n/N: sort and normalize, w: save the tree, q: quit REPL"
 
 
 def repl(fname: str):
@@ -16,6 +17,8 @@ def repl(fname: str):
         "l": _list,
         "s": _show,
         "S": lambda c: _show(c, show_done=True),
+        "n": _normalize,
+        "N": lambda c: _normalize(c, eager=True),
         "e": _edit,
         "w": _save,
         "q": _quit
@@ -27,7 +30,11 @@ def repl(fname: str):
     while not config["quit"]:
         cmd = input(PROMPT)
         if cmd in global_commands:
-            global_commands[cmd](config)
+            try:
+                global_commands[cmd](config)
+            except Exception as e:
+                print("Failed.")
+                print(e)
         else:
             print(HELP)
 
@@ -43,11 +50,7 @@ def _show(config: dict, show_done: bool = False):
 def _edit(config: dict):
     msg = dumps_tree(config["tree"]).encode("utf-8")
     result = editor.edit(contents=msg).decode("utf-8")
-    try:
-        config["tree"] = loads_tree(result)
-    except Exception as e:
-        print(e)
-        print("Parsing failed. Fall back to the original.")
+    config["tree"] = loads_tree(result)
 
 
 def dumps_tree(tree: Tree, indent="", buffer="", last=True) -> str:
@@ -88,13 +91,14 @@ def loads_attr(s: str) -> Tuple[str, Optional[Attr]]:
     elif len(ss) != 3:
         raise ValueError(f"Unrecognized token: {s} -> {ss}")
     indent, done_priority, label_tags = ss
+    indent = indent.replace("|", " ").replace("+", " ")
     done_mark, priority = done_priority[:1], done_priority[1:]
 
-    assert done_mark in " x"
+    assert done_mark in " x", "invalid done_mark"
     done = done_mark == "x"
-    assert valid_priority(priority)
+    assert valid_priority(priority), "invalid priority"
     label, *tags = map(str.strip, label_tags.split("#"))
-    assert all(valid_tag(t) for t in tags)
+    assert all(valid_tag(t) for t in tags), "invalid tags"
     return indent, new_attr(label=label, priority=priority, tags=tags, done=done)
 
 
@@ -131,6 +135,13 @@ def loads_tree(s: str, tree_stack: List[Tuple[Optional[str], Tree]] = None) -> T
         tree_stack.append((indent, tree))
 
     return loads_tree(s_next, tree_stack)
+
+
+def _normalize(config: dict, eager=False):
+    config["tree"] = sort_tree(config["tree"])
+    if eager:
+        config["tree"] = normalized_tree(config["tree"])
+    _show(config, show_done=True)
 
 
 def _save(config: dict):
