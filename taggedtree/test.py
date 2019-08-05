@@ -4,17 +4,17 @@ from .core import new_tree, new_attr, root, show_tree, read_tree, sort_tree, sav
 def sample_tree():
     tree = new_tree(root(), [
         new_tree(new_attr("study"), [
-            new_tree(new_attr("PAC-Bayesian transportation bound"), [
+            new_tree(new_attr("xxx"), [
                 new_tree(new_attr("oracle", priority="1", done=True)),
-                new_tree(new_attr("empirical", priority="2", tags=["AISTATS20"])),
+                new_tree(new_attr("empirical", priority="2", tags=["SOME_CONF"])),
             ]),
-            new_tree(new_attr("Neural heuristics", priority="1")),
+            new_tree(new_attr("wow", priority="1")),
         ]),
-        new_tree(new_attr("感性"), [
-            new_tree(new_attr("映画を見る")),
-            new_tree(new_attr("ピアノを始める")),
+        new_tree(new_attr("mental"), [
+            new_tree(new_attr("movie")),
+            new_tree(new_attr("piano")),
         ]),
-        new_tree(new_attr("体力")),
+        new_tree(new_attr("physical")),
     ])
     return tree
 

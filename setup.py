@@ -25,7 +25,7 @@ with open('README.md') as f:
 
 files = ["resources/*"]
 
-setup(name='pommerman',
+setup(name='taggedtree',
       version=VERSION,
       description=readme,
       url='https://github.com/koheimiya/do-what-you-want',
@@ -38,6 +38,8 @@ setup(name='pommerman',
       packages=find_packages(),
       install_requires=install_requires,
       entry_points={
-        'console_scripts': [],
+        'console_scripts': [
+            'tt = tt:main',
+        ],
       },
       zip_safe=False)

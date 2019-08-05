@@ -1,7 +1,10 @@
 """ REPL for tagged ordered trees """
+import os
+
 import editor
 
-from taggedtree.core import save_tree, load_tree, show_tree, show_leaves, normalized_tree, sort_tree, read_tree
+from taggedtree.core import save_tree, load_tree, show_tree, show_leaves, normalized_tree, sort_tree, read_tree, \
+    new_tree, root
 
 GREETINGS = "---- Running REPL on {} ----"
 PROMPT = "REPL > "
@@ -21,7 +24,11 @@ def repl(fname: str):
         "q": _quit
     }
 
-    tree = load_tree(fname)
+    if os.path.exists(fname):
+        tree = load_tree(fname)
+    else:
+        tree = new_tree(root())
+
     config = {"tree": tree, "fname": fname, "quit": False}
     print(GREETINGS.format(fname))
     while not config["quit"]:
