@@ -15,8 +15,8 @@ def root() -> Attr:
 def new_attr(label: str, priority: str = "", tags: List[str] = None, done: bool = False) -> Attr:
     if tags is None:
         tags = []
-    assert valid_priority(priority)
-    assert all(valid_tag(t) for t in tags)
+    assert valid_priority(priority), f"invalid priority: {priority}"
+    assert all(valid_tag(t) for t in tags), f"invalid tags: {tags}"
     return {"label": label, "priority": priority, "tags": tags, "done": done}
 
 
@@ -148,11 +148,11 @@ def read_attr(s: str) -> Tuple[str, Optional[Attr]]:
     indent = indent.replace("|", " ").replace("+", " ")
     done_mark, priority = done_priority[:1], done_priority[1:]
 
-    assert done_mark in " x", "invalid done_mark"
+    assert done_mark in " x", f"invalid done_mark: {done_mark}"
     done = done_mark == "x"
-    assert valid_priority(priority), "invalid priority"
+    assert valid_priority(priority), f"invalid priority: {priority}"
     label, *tags = map(str.strip, label_tags.split("#"))
-    assert all(valid_tag(t) for t in tags), "invalid tags"
+    assert all(valid_tag(t) for t in tags), f"invalid tags: {tags}"
     return indent, new_attr(label=label, priority=priority, tags=tags, done=done)
 
 
