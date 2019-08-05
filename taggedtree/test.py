@@ -1,5 +1,4 @@
-from taggedtree.repl import loads_tree
-from .core import new_tree, new_attr, root, show_tree, sort_tree, save_tree, load_tree
+from .core import new_tree, new_attr, root, show_tree, read_tree, sort_tree, save_tree, load_tree
 
 
 def sample_tree():
@@ -39,6 +38,6 @@ def test_save_load_tree():
 def test_show_loads_tree():
     tree = sample_tree()
     print(show_tree(tree))
-    tree1 = loads_tree(show_tree(tree, show_done=True))
+    tree1 = read_tree(show_tree(tree, show_done=True))
     print(show_tree(tree1))
     assert tree == tree1
