@@ -20,8 +20,9 @@ Now, a simple framework will help you do what you want.
 * Easy to browse and edit
 
 ### Possible Implementation: Tagged Tree
-* Media: text file with each line of `- [PRIORITY] LABEL #TAG1 #TAG2 ..`
-    * PRIORITY is marked by numbers. Least priority is `[]`. If it is done, marked as `[X]`.
+* Media: text file with each line of `- [*PRIORITY] LABEL #TAG1 #TAG2 ..`
+    * `*` is the placeholder for the state indicator of the goal: if it is done, mark `x`, otherwise, leave it blank (` `).
+    * PRIORITY is marked by numbers. Least priority is `[]`. If it is done, marked as `[x]`.
 * Viewer:
     * Up/Down/Left/Right: Select a node.
     * Fold and unfold the sub tree.
