@@ -39,7 +39,7 @@ setup(name='taggedtree',
       install_requires=install_requires,
       entry_points={
         'console_scripts': [
-            'tt = tt:main',
+            'tt = app.tt:main',
         ],
       },
       zip_safe=False)
