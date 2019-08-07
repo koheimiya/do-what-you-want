@@ -40,6 +40,7 @@ setup(name='taggedtree',
       entry_points={
         'console_scripts': [
             'tt = app.tt:main',
+            'itt = app.itt:main',
         ],
       },
       zip_safe=False)

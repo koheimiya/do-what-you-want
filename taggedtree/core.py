@@ -191,7 +191,7 @@ def read_tree(s: str, tree_stack: List[Tuple[Optional[str], Tree]] = None) -> Tr
     return read_tree(s_next, tree_stack)
 
 
-def show_leaves(tree: Tree, tags: list=None, address=" ", buffer="", urgent_only=True, show_done=False):
+def show_leaves(tree: Tree, tags: list = None, address=" ", buffer="", urgent_only=True, show_done=False):
     if tags is None:
         tags = []
 
@@ -200,11 +200,15 @@ def show_leaves(tree: Tree, tags: list=None, address=" ", buffer="", urgent_only
     else:
         tags = tags + attributes(tree)["tags"]
         address = address + "/" + underscore_label(attributes(tree)["label"])
-        min_p = min(attributes(t)["priority"] for t in subtrees(tree) if not attributes(t)["done"])
+        min_child = min(
+            [st for st in subtrees(tree) if not is_done(attributes(st))],
+            key=_key_sort_tree,
+            default=new_tree(root())
+        )
         for st in subtrees(tree):
-            if urgent_only and attributes(st)["priority"] > min_p:
+            if urgent_only and _key_sort_tree(st) > _key_sort_tree(min_child):
                 continue
-            if not show_done and attributes(st)["done"]:
+            if not show_done and is_done(attributes(st)):
                 continue
             buffer = show_leaves(st, tags, address, buffer)
     return buffer
